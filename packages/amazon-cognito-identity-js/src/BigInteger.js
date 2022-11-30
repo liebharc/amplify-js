@@ -15,6 +15,7 @@
 //   divide
 //   modPow
 
+import { NativeModules } from 'react-native';
 export default BigInteger;
 
 /*
@@ -688,8 +689,30 @@ Montgomery.prototype.reduce = montReduce;
 Montgomery.prototype.mulTo = montMulTo;
 Montgomery.prototype.sqrTo = montSqrTo;
 
+function nativeModPow(t, e, m, callback) {
+	NativeModules.RNAWSCognito.computeModPow(
+		{
+			target: t.toString(16),
+			value: e.toString(16),
+			modifier: m.toString(16),
+		},
+		(err, result) => {
+			if (err) {
+				callback(err, null);
+			} else {
+				callback(null, new BigInteger(result, 16));
+			}
+		}
+	);
+	return undefined;
+}
+
 // (public) this^e % m (HAC 14.85)
 function bnModPow(e, m, callback) {
+	if (NativeModules.RNAWSCognito) {
+		return nativeModPow(this.toString(16), e, m, callback);
+	}
+
 	var i = e.bitLength(),
 		k,
 		r = nbv(1),
