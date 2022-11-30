@@ -710,7 +710,7 @@ function nativeModPow(t, e, m, callback) {
 // (public) this^e % m (HAC 14.85)
 function bnModPow(e, m, callback) {
 	if (NativeModules.RNAWSCognito) {
-		return nativeModPow(this.toString(16), e, m, callback);
+		return nativeModPow(this, e, m, callback);
 	}
 
 	var i = e.bitLength(),
